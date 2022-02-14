@@ -29,9 +29,9 @@ export default function Game({ navigation }: GameScreenProps) {
   const fetchData = async (url: RequestInfo) => {
     setReady(false);
     await fetch(url)
-      .then((response) => response.json())
-      .then((data) => setPokemonData(data))
-      .catch((error) => console.error(error))
+      .then(response => response.json())
+      .then(data => setPokemonData(data))
+      .catch(error => console.error(error))
       .finally(() => setReady(true));
   };
 
@@ -72,7 +72,7 @@ export default function Game({ navigation }: GameScreenProps) {
         style={styles.input}
         value={inputValue}
         placeholder="Enter name"
-        onChangeText={(e) => setInputValue(e)}
+        onChangeText={e => setInputValue(e)}
       />
       <View style={styles.button}>
         <Button title="Verify" onPress={handleVerify} />
