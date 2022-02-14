@@ -1,5 +1,4 @@
 import React from "react";
-import { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Button, Image } from "react-native";
 
 interface StartupScreenProps {

@@ -1,9 +1,11 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Button, Alert, TextInput, Image, ScrollView } from "react-native";
+import { StyleSheet, Text, View, Button, Alert, TextInput, Image } from "react-native";
+
 interface GameScreenProps {
   navigation: any;
 }
+
 export default function Game({ navigation }: GameScreenProps) {
   interface Pokemon {
     sprites: {
