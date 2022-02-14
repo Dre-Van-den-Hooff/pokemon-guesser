@@ -45,11 +45,4 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "blue",
   },
-  input: {
-    borderWidth: 2,
-    borderRadius: 12,
-    borderColor: "lightgreen",
-    width: 200,
-    height: 50,
-  },
 });

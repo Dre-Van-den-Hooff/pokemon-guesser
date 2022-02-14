@@ -43,15 +43,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "blue",
   },
-  input: {
-    borderWidth: 2,
-    borderRadius: 12,
-    borderColor: "blue",
-    width: 200,
-    height: 50,
-    marginTop: 10,
-    marginBottom: 20,
-  },
   image: {
     height: 300,
     width: 300,
