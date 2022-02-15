@@ -1,23 +1,19 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Button, Alert, TextInput, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Alert,
+  TextInput,
+  Image,
+  KeyboardAvoidingView,
+  ScrollView,
+} from "react-native";
 
-interface GameScreenProps {
-  navigation: any;
-}
-
-export default function Game({ navigation }: GameScreenProps) {
-  interface Pokemon {
-    sprites: {
-      front_default: string;
-    };
-    forms: Array<Forms>;
-  }
-
-  interface Forms {
-    name: string;
-    url: string;
-  }
+export default function Game({ navigation, route }: GameScreenProps) {
+  const { currentDifficultyName, currentDifficultyAmount } = route.params;
 
   const [pokemonData, setPokemonData] = useState<Pokemon>();
   const [ready, setReady] = useState<boolean>(false);
@@ -25,6 +21,7 @@ export default function Game({ navigation }: GameScreenProps) {
   const [score, setScore] = useState<number>(0);
   const [counter, setCounter] = useState<number>(0);
   const [lastGuess, setLastGuess] = useState<boolean>(false);
+  const [seen, setSeen] = useState<number[]>([]);
 
   const fetchData = async (url: RequestInfo) => {
     setReady(false);
@@ -37,14 +34,19 @@ export default function Game({ navigation }: GameScreenProps) {
 
   //random pokemon between [1, 721] (up till gen 6)
   const fetchNext = async () => {
-    if (counter < 10) {
+    if (counter < currentDifficultyAmount) {
       const id = Math.floor(Math.random() * 721) + 1;
-      await fetchData(`https://pokeapi.co/api/v2/pokemon/${id}`);
-      setCounter(counter + 1);
-      setInputValue("");
-    } else {
+      if (!seen.includes(id)) {
+        await fetchData(`https://pokeapi.co/api/v2/pokemon/${id}`);
+        setCounter(counter + 1);
+        setInputValue("");
+        seen.push(id);
+        console.log(seen);
+      } else fetchNext();
+    } else navigation.navigate("Score", { score, currentDifficultyAmount });
+
+    if (counter === currentDifficultyAmount - 1) {
       setLastGuess(true);
-      navigation.navigate("Score", { score: score });
     }
   };
 
@@ -61,26 +63,34 @@ export default function Game({ navigation }: GameScreenProps) {
   }, []);
 
   return (
-    <View style={styles.main_container}>
-      <Text style={styles.title}>Who's this pokemon?</Text>
-      {ready ? (
-        <Image style={styles.image} source={{ uri: pokemonData?.sprites.front_default }} />
-      ) : (
-        <Image style={styles.image} source={require("../images/spinning-loading.gif")} />
-      )}
-      <TextInput
-        style={styles.input}
-        value={inputValue}
-        placeholder="Enter name"
-        onChangeText={e => setInputValue(e)}
-      />
-      <View style={styles.button}>
-        <Button title="Verify" onPress={handleVerify} />
-      </View>
-      <View style={styles.button}>
-        <Button title={lastGuess ? "Check my Score" : "Next"} onPress={fetchNext} />
-      </View>
-    </View>
+    <KeyboardAvoidingView style={styles.scrollview} behavior="padding">
+      <ScrollView>
+        <View style={styles.main_container}>
+          <View style={styles.difficultyView}>
+            <Text style={styles.difficultyText}>Difficulty: {currentDifficultyName}</Text>
+            <Text style={styles.difficultyText}>Pokemon left: {currentDifficultyAmount - counter}</Text>
+          </View>
+          <Text style={styles.title}>Who's this pokemon?</Text>
+          {ready ? (
+            <Image style={styles.image} source={{ uri: pokemonData?.sprites.front_default }} />
+          ) : (
+            <Image style={styles.image} source={require("../images/spinning-loading.gif")} />
+          )}
+          <TextInput
+            style={styles.input}
+            value={inputValue}
+            placeholder="Enter name"
+            onChangeText={e => setInputValue(e)}
+          />
+          <View style={styles.button}>
+            <Button title="Verify" onPress={handleVerify} />
+          </View>
+          <View style={styles.button}>
+            <Button title={lastGuess ? "Check my score" : " I don't know"} onPress={fetchNext} />
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -116,5 +126,18 @@ const styles = StyleSheet.create({
     height: 300,
     width: 300,
     resizeMode: "stretch",
+  },
+  difficultyText: {
+    fontSize: 20,
+    margin: 10,
+  },
+  difficultyView: {
+    flexDirection: "row",
+  },
+  scrollview: {
+    backgroundColor: "#fff",
+    paddingTop: 60,
+    paddingHorizontal: 10,
+    flex: 1,
   },
 });

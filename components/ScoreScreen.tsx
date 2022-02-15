@@ -1,14 +1,8 @@
 import React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 
-interface ScoreScreenProps {
-  route: any;
-  navigation: any;
-  score: number;
-}
-
 export default function ScoreScreen({ route, navigation }: ScoreScreenProps) {
-  const { score } = route.params;
+  const { score, currentDifficultyAmount } = route.params;
 
   const handlePress = () => {
     navigation.navigate("Startup");
@@ -16,7 +10,9 @@ export default function ScoreScreen({ route, navigation }: ScoreScreenProps) {
 
   return (
     <View style={styles.main_container}>
-      <Text style={styles.title}>Your score: {score}/10</Text>
+      <Text style={styles.title}>
+        Your score: {score}/{currentDifficultyAmount}
+      </Text>
       <View style={styles.button}>
         <Button title="Play again" onPress={handlePress} />
       </View>

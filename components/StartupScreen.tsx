@@ -1,23 +1,68 @@
-import React from "react";
-import { StyleSheet, Text, View, Button, Image } from "react-native";
-
-interface StartupScreenProps {
-  navigation: any;
-}
+import React, { useState } from "react";
+import { StyleSheet, Text, View, Button, Image, FlatList, Alert } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function StartupScreen({ navigation }: StartupScreenProps) {
-  const handlePress = () => {
-    navigation.navigate("Game");
+  const difficulties: Difficulty[] = [
+    {
+      id: "1",
+      name: "easy",
+      amount: 10,
+    },
+    {
+      id: "2",
+      name: "medium",
+      amount: 25,
+    },
+    {
+      id: "3",
+      name: "hard",
+      amount: 50,
+    },
+    {
+      id: "4",
+      name: "expert",
+      amount: 100,
+    },
+  ];
+
+  const [currentDifficultyName, setCurrentDifficultyName] = useState<string>("No difficulty selected");
+  const [currentDifficultyAmount, setCurrentDifficultyAmount] = useState<number>(0);
+
+  const handleStart = () => {
+    if (currentDifficultyName === "No difficulty selected") {
+      Alert.alert("Please select a difficulty.");
+    } else navigation.navigate("Game", { currentDifficultyName, currentDifficultyAmount });
+  };
+
+  const handleDifficulty = (name: string, amount: number) => {
+    setCurrentDifficultyName(name);
+    setCurrentDifficultyAmount(amount);
+  };
+
+  const renderAmount = ({ item }: any) => {
+    return (
+      <View style={styles.difficulties}>
+        <Button
+          title={`${item.name} - ${item.amount} pokemon`}
+          onPress={() => handleDifficulty(item.name, item.amount)}
+        />
+      </View>
+    );
   };
 
   return (
-    <View style={styles.main_container}>
+    <SafeAreaView style={styles.main_container}>
       <Image source={require("../images/Pokemon-Logo.png")} style={styles.image} />
       <Text style={styles.title}>Pokemon guessing game!</Text>
-      <View style={styles.button}>
-        <Button title="Start Game" onPress={handlePress} />
+      <View style={styles.flatlist}>
+        <FlatList data={difficulties} renderItem={renderAmount} keyExtractor={item => item.id} />
       </View>
-    </View>
+      <Text style={styles.difficultyText}>Current difficulty: {currentDifficultyName}</Text>
+      <View style={styles.button}>
+        <Button title="Start Game" onPress={handleStart} />
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -30,6 +75,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 30,
+    marginBottom: 50,
   },
   image: {
     height: 140,
@@ -40,9 +86,24 @@ const styles = StyleSheet.create({
     padding: 1,
     backgroundColor: "yellow",
     borderRadius: 12,
-    margin: 10,
-    marginTop: 100,
+    margin: 0,
+    marginTop: 30,
     borderWidth: 2,
     borderColor: "blue",
+  },
+  difficulties: {
+    padding: 1,
+    backgroundColor: "yellow",
+    borderRadius: 12,
+    margin: 20,
+    marginTop: 1,
+    borderWidth: 2,
+    borderColor: "blue",
+  },
+  flatlist: {
+    flexDirection: "row",
+  },
+  difficultyText: {
+    fontSize: 20,
   },
 });
