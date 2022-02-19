@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Button, Image, FlatList, Alert } from "react-native";
+import { StyleSheet, Text, View, Button, Image, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function StartupScreen({ navigation }: StartupScreenProps) {
@@ -26,13 +26,11 @@ export default function StartupScreen({ navigation }: StartupScreenProps) {
     },
   ];
 
-  const [currentDifficultyName, setCurrentDifficultyName] = useState<string>("No difficulty selected");
-  const [currentDifficultyAmount, setCurrentDifficultyAmount] = useState<number>(0);
+  const [currentDifficultyName, setCurrentDifficultyName] = useState<string>("easy");
+  const [currentDifficultyAmount, setCurrentDifficultyAmount] = useState<number>(10);
 
   const handleStart = () => {
-    if (currentDifficultyName === "No difficulty selected") {
-      Alert.alert("Please select a difficulty.");
-    } else navigation.navigate("Game", { currentDifficultyName, currentDifficultyAmount });
+    navigation.navigate("Game", { currentDifficultyName, currentDifficultyAmount });
   };
 
   const handleDifficulty = (name: string, amount: number) => {
