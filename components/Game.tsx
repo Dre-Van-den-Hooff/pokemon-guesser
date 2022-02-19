@@ -23,9 +23,9 @@ export default function Game({ navigation, route }: GameScreenProps) {
   const [lastGuess, setLastGuess] = useState<boolean>(false);
   const [seen, setSeen] = useState<number[]>([]);
 
-  const fetchData = async (url: RequestInfo) => {
+  const fetchData = (url: RequestInfo) => {
     setReady(false);
-    await fetch(url)
+    fetch(url)
       .then(response => response.json())
       .then(data => setPokemonData(data))
       .catch(error => console.error(error))
@@ -33,15 +33,14 @@ export default function Game({ navigation, route }: GameScreenProps) {
   };
 
   //random pokemon between [1, 721] (up till gen 6)
-  const fetchNext = async () => {
+  const fetchNext = () => {
     if (counter < currentDifficultyAmount) {
       const id = Math.floor(Math.random() * 721) + 1;
       if (!seen.includes(id)) {
-        await fetchData(`https://pokeapi.co/api/v2/pokemon/${id}`);
+        fetchData(`https://pokeapi.co/api/v2/pokemon/${id}`);
         setCounter(counter + 1);
         setInputValue("");
         seen.push(id);
-        console.log(seen);
       } else fetchNext();
     } else navigation.navigate("Score", { score, currentDifficultyAmount });
 
